@@ -25,7 +25,7 @@ def bakeries():
 
 @app.route('/bakeries/<int:id>', methods = ['GET', 'PATCH', 'DELETE'])
 def bakery_by_id(id):
-    
+
     bakery = Bakery.query.filter_by(id=id).first()
 
     if request.method == 'GET':
@@ -49,7 +49,22 @@ def bakery_by_id(id):
         )
 
         return response
-        
+
+    elif request.method == 'DELETE':
+        db.session.delete(bakery)
+        db.session.commit()
+
+        response_body = {
+            "delete_successful": True,
+            "message": "Bakery deleted."
+        }
+
+        response = make_response(
+            response_body,
+            200
+        )
+
+        return response
 
 @app.route('/baked_goods', methods=['GET', 'POST'])
 def baked_goods():
