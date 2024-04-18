@@ -50,21 +50,6 @@ def bakery_by_id(id):
 
         return response
 
-    elif request.method == 'DELETE':
-        db.session.delete(bakery)
-        db.session.commit()
-
-        response_body = {
-            "delete_successful": True,
-            "message": "Bakery deleted."
-        }
-
-        response = make_response(
-            response_body,
-            200
-        )
-
-        return response
 
 @app.route('/baked_goods', methods=['GET', 'POST'])
 def baked_goods():
@@ -116,6 +101,35 @@ def most_expensive_baked_good():
     most_expensive = BakedGood.query.order_by(BakedGood.price.desc()).limit(1).first()
     most_expensive_serialized = most_expensive.to_dict()
     return make_response( most_expensive_serialized,   200  )
+
+
+@app.route('/baked_goods/<int:id>', methods = ['GET', 'DELETE'])
+def baked_goods_by_id(id):
+    baked_goods = BakedGood.query.filter_by(id=id).first()
+
+    if request.method == 'GET':
+        baked_goods_serialized = baked_goods.to_dict()
+        
+        return make_response ( baked_goods_serialized, 200  )
+    
+    elif request.method == 'DELETE':
+        db.session.delete(baked_goods)
+        db.session.commit()
+
+        response_body = {
+            "delete_successful": True,
+            "message": "Baked good deleted."
+        }
+
+        response = make_response(
+            response_body,
+            200
+        )
+
+        return response
+
+
+
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
